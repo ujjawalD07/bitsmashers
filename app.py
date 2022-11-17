@@ -45,7 +45,7 @@ def gen_frames():
         if not success:
             break
         else:
-            
+
             image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             image.flags.writeable = False
 
@@ -73,14 +73,17 @@ def gen_frames():
                                    tuple(np.multiply(r_elbow, [1250, 350]).astype(int)), 
                                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 2, cv2.LINE_AA
                                         )
+
                  cv2.putText(image, str(r_hand), 
                                    tuple(np.multiply(r_elbow, [550, 350]).astype(int)), 
                                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2, cv2.LINE_AA
                                         )
+
                  cv2.putText(image, str(l_leg), 
                                    tuple(np.multiply(l_knee, [800, 600]).astype(int)), 
                                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 2, cv2.LINE_AA
                                         )
+
                  cv2.putText(image, str(r_leg), 
                                    tuple(np.multiply(r_knee, [400, 600]).astype(int)), 
                                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 2, cv2.LINE_AA
@@ -92,33 +95,46 @@ def gen_frames():
                                         mp_drawing.DrawingSpec(color=(0,128,0), thickness=2, circle_radius=2), 
                                         mp_drawing.DrawingSpec(color=(0,128,0), thickness=2, circle_radius=2) 
                                         )
+                    accuracy=(((60-r_hand)+(90-l_hand)+(r_leg-150)+(l_leg-150))/720)
+
                  elif r_hand>100 and r_hand<180 and l_hand<90 or l_hand>100 and l_hand<160 and r_hand<60 and r_leg>150 and r_leg<180 and l_leg>150 and l_leg<180:
                     mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
                                         mp_drawing.DrawingSpec(color=(0,128,0), thickness=2, circle_radius=2), 
                                         mp_drawing.DrawingSpec(color=(0,128,0), thickness=2, circle_radius=2) 
                                         )
+                    accuracy=(((l_hand-100)+(60-r_hand)+(r_leg-150)+(l_leg-150))/720)
+
           #       pose2 https://www.youtube.com/clip/UgkxZJAvtpPYlD7P5t8-b6QoTbSALc0a_Va4
                  elif l_hand>70 and l_hand<90 and r_hand>40 and r_hand<60 and r_leg>150 and r_leg<180 and l_leg>150 and l_leg<180:
                     mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
                                         mp_drawing.DrawingSpec(color=(0,128,0), thickness=2, circle_radius=2), 
                                         mp_drawing.DrawingSpec(color=(0,128,0), thickness=2, circle_radius=2) 
                                         )
+                    accuracy=(((l_hand- 80)+(r_hand-50)+(r_leg-150)+(l_leg-150))/720)
+
                  elif r_leg>30 and r_leg<60 and l_leg<180:
                     mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
                                         mp_drawing.DrawingSpec(color=(0,128,0), thickness=2, circle_radius=2), 
                                         mp_drawing.DrawingSpec(color=(0,128,0), thickness=2, circle_radius=2) 
                                         )
+                    accuracy=(((r_leg-45)+(180-l_leg))/360)
+
           #       pose4 https://www.youtube.com/clip/UgkxoI0yHWRziYrfK1xkLkwZ3m-LfepQm69v
                  elif r_leg>100 and r_leg<150 and l_leg>150 and l_leg<180:
                     mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
                                         mp_drawing.DrawingSpec(color=(0,128,0), thickness=2, circle_radius=2), 
                                         mp_drawing.DrawingSpec(color=(0,128,0), thickness=2, circle_radius=2) 
-                                        ) 
+                                        )
+                    accuracy=(((r_leg-125)+(l_leg-165))/360)
+ 
                  else:
                     mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
                                         mp_drawing.DrawingSpec(color=(0,0,255), thickness=2, circle_radius=2), 
                                         mp_drawing.DrawingSpec(color=(0,0,255), thickness=2, circle_radius=2) 
-                                        )    
+                                        )   
+                 def print_accuracy():
+                    ans=(abs(accuracy)*1000)/3
+                    print(ans) 
                    
             except:
                 pass                      
@@ -127,6 +143,8 @@ def gen_frames():
             frame = buffer.tobytes()
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  # concat frame one by one and show result
+          
+
 
 
 @app.route("/")
@@ -159,18 +177,17 @@ def vid1():
 
 @app.route("/vid2/")
 def vid2():
-     return Response()
+     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @app.route("/vid3/")
 def vid3():
-     return Response()
+     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @app.route("/vid4/")
 def vid4():
-     return Response()
+     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
 if __name__=="__main__":
     app.run(host = "127.0.0.1",debug=True)
 
-    #https://github.com/ujjawalD07/bitsmashers.git
