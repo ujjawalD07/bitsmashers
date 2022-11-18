@@ -126,16 +126,41 @@ def gen_frames():
                                         mp_drawing.DrawingSpec(color=(0,128,0), thickness=2, circle_radius=2) 
                                         )
                     accuracy=(((r_leg-125)+(l_leg-165))/360)
+
+          # yoga poses
+                 elif r_leg>60 and r_leg<80 and l_leg>130 and l_leg<160 and r_hand>130 and r_hand<160 and l_hand>130 and l_hand<160:
+                    mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
+                                        mp_drawing.DrawingSpec(color=(0,128,0), thickness=2, circle_radius=2), 
+                                        mp_drawing.DrawingSpec(color=(0,128,0), thickness=2, circle_radius=2) 
+                                        )
+                    accuracy=(((r_leg-75)+(l_leg-145)+(r_hand-145)+(l_hand-145))/720)
+          #pose2
+                 elif l_leg>130 and l_leg<150:
+                    mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
+                                        mp_drawing.DrawingSpec(color=(0,128,0), thickness=2, circle_radius=2), 
+                                        mp_drawing.DrawingSpec(color=(0,128,0), thickness=2, circle_radius=2) 
+                                        )
+                    accuracy=(((l_leg-140))/180)
+          #pose3
+                 elif l_leg>130 and l_leg<150 and r_leg>100 and r_leg<130:
+                    mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
+                                        mp_drawing.DrawingSpec(color=(0,128,0), thickness=2, circle_radius=2), 
+                                        mp_drawing.DrawingSpec(color=(0,128,0), thickness=2, circle_radius=2) 
+                                        )
+                    accuracy=(((l_leg-140)+(r_leg-120))/360)
+
  
                  else:
                     mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
                                         mp_drawing.DrawingSpec(color=(0,0,255), thickness=2, circle_radius=2), 
                                         mp_drawing.DrawingSpec(color=(0,0,255), thickness=2, circle_radius=2) 
                                         )   
-                 def print_accuracy():
+                 def print_acc():
                     ans=(abs(accuracy)*1000)/3
-                    print(ans) 
-                   
+                    if(ans>80):
+                         print(ans) 
+                    
+                 print_acc()
             except:
                 pass                      
             
@@ -170,6 +195,12 @@ def start2():
 @app.route("/start3/")
 def start3():
      return render_template("start3.html")
+@app.route("/charts/")
+def charts():
+     values = [12, 19, 3, 5, 2, 3]
+     labels = ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange']
+     colors = ['#ff0000','#0000ff','#ffffe0','#008000','#800080','#FFA500', '#FF2554', ]
+     return render_template("charts.html")
 
 @app.route("/vid1/")
 def vid1():
